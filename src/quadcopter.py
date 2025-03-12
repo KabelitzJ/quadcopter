@@ -55,12 +55,13 @@ def D_linearized():
   return np.zeros((6, 4))
 
 def fn(x):
-  return 0.2 * np.sin(x) + 2
+  return 1.7 * np.sin(1.7 * x)
 
 def target(t, fn):
-  target = np.zeros((12, t.size))
-  target[1, :] = t * 0.2
-  target[2, :] = fn(t)
+  target = np.zeros((12, len(t)))
+  target[0, :] = 1.7 * np.cos(1.7 * t) + t * 0.25
+  target[1, :] = 1.7 * np.sin(1.7 * t) + t * 0.25
+  target[2, :] = t * 0.25
   return target
 
 class Result:
@@ -109,9 +110,9 @@ def main():
   t = np.linspace(0, 60, 6000)
   
   x0 = np.zeros(12)
-  x0[0] = 0  # Initial x position
-  x0[1] = 4  # Initial y position
-  x0[2] = 1  # Initial z position
+  # x0[0] = 0  # Initial x position
+  # x0[1] = 4  # Initial y position
+  # x0[2] = 1  # Initial z position
   x0[3] = 0.1  # Small roll angle
   u = np.zeros((4, t.size))
   r = target(t, fn)
@@ -130,14 +131,13 @@ def main():
     result.x = result.x + dx * (t[i] - t[i-1])  # Integrate state
 
     # Store the results
+    # result.y[:, i] = C @ result.x + D @ u[:, i]
     result.y[:, i] = result.x
     result.u[:, i] = u[:, i]
 
-  # print(result.y)
-
   # Plot the results
 
-  # visualization2d(t, result, fn)
+  visualization2d(t, result, fn)
   visualization3d(t, result)
 
 if __name__ == "__main__":
