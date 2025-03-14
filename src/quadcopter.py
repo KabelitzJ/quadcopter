@@ -59,8 +59,8 @@ def fn(x):
 
 def target(t, fn):
   target = np.zeros((12, len(t)))
-  target[0, :] = 1.7 * np.cos(1.7 * t) + t * 0.25
-  target[1, :] = 1.7 * np.sin(1.7 * t) + t * 0.25
+  target[0, :] = 1.7 * np.cos(1.7 * t) + 0.25
+  target[1, :] = 1.7 * np.sin(1.7 * t) + 0.25
   target[2, :] = t * 0.25
   return target
 

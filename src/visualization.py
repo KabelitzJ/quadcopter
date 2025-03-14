@@ -2,7 +2,6 @@ import numpy as np
 from parameters import parameters
 import matplotlib.pyplot as plt
 import matplotlib.animation as animation
-from mpl_toolkits.mplot3d import Axes3D
 from matplotlib.widgets import Button
 
 def rotation_matrix(roll, pitch, yaw):
