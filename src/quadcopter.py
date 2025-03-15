@@ -4,55 +4,8 @@ import matplotlib.pyplot as plt
 
 from parameters import parameters
 from visualization import visualization2d, visualization3d
-
-def A_linearized():
-  g = parameters["g"]
-
-  # Taken from https://uu.diva-portal.org/smash/get/diva2:1870673/FULLTEXT01.pdf
-
-  return np.array([
-    [0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1],
-    [0, 0, 0, 0, g, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, -g, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-  ])
-
-def B_linearized():
-  m = parameters["m"]
-  I_x = parameters["I_x"]
-  I_y = parameters["I_y"]
-  I_z = parameters["I_z"]
-
-  # Taken from https://uu.diva-portal.org/smash/get/diva2:1870673/FULLTEXT01.pdf
-
-  return np.array([
-    [0, 0, 0, 0],
-    [0, 0, 0, 0],
-    [0, 0, 0, 0],
-    [0, 0, 0, 0],
-    [0, 0, 0, 0],
-    [0, 0, 0, 0],
-    [0, 0, 0, 0],
-    [0, 0, 0, 0],
-    [1/m, 0, 0, 0],
-    [0, 1/I_x, 0, 0],
-    [0, 0, 1/I_y, 0],
-    [0, 0, 0, 1/I_z],
-  ])
-
-def C_linearized():
-  return np.eye(6, 12)
-
-def D_linearized():
-  return np.zeros((6, 4))
+from system import System
+from state import A_linearized, B_linearized, C_linearized, D_linearized
 
 def fn(x):
   return 1.7 * np.sin(1.7 * x)
@@ -83,18 +36,22 @@ def main():
   C = C_linearized()
   D = D_linearized()
 
-  system = ctrl.ss(A, B, C, D)
+  system = System(A, B, C, D)
 
-  # Implement observer for the system
-
-  # TODO
+  if not system.is_controllable():
+    print("System is not controllable")
+    return
+  
+  if not system.is_observable():
+    print("System is not observable")
+    return
 
   # Implement LQR regulator for the system
 
   Q = np.diag([10, 10, 10, 1, 1, 1, 2, 2, 2, 0.5, 0.5, 0.5])
   R = np.diag([2, 2, 2, 2])
 
-  K, _, _ = ctrl.lqr(system, Q, R)
+  K, _, _ = ctrl.lqr(A, B, Q, R)
 
   # Define the reference filter N (example filter)
   N = np.eye(12)

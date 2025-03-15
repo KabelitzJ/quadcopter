@@ -28,7 +28,7 @@ def visualization2d(t, result, fn):
   axs[0].plot(t, result.y[0, :], label="x")
   axs[0].plot(t, result.y[1, :], label="y")
   axs[0].plot(t, result.y[2, :], label="z")
-  axs[0].plot(t, fn(t), label="z_target", linestyle="--")
+  axs[0].plot(t, fn(t), label="y_target", linestyle="--")
   axs[0].legend()
   axs[0].set_xlabel("Time [s]")  # Correct method
   axs[0].set_ylabel("Position [m]")  # Correct method
